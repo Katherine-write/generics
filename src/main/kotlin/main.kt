@@ -8,7 +8,7 @@ interface Content<T> {
     val date: Long
     val comments: List<Comment>
     var isDeleted: Boolean
-    var text:String
+    var text: String
     var title: String
     fun copyWithId(newId: Int): T
     fun withNewComment(newComments: List<Comment>): T
@@ -23,7 +23,8 @@ data class Comment(
     val comment: String,
     var isDeleted: Boolean = false
 )
- data class Note(
+
+data class Note(
     override val id: Int,
     override val authorId: Int,
     override val date: Long,
@@ -33,24 +34,25 @@ data class Comment(
     override var text: String
 
 ) : Content<Note> {
-     override fun copyWithId(newId: Int): Note {
-         return this.copy(id = newId)
-     }
+    override fun copyWithId(newId: Int): Note {
+        return this.copy(id = newId)
+    }
 
-     override fun withNewComment(newComments: List<Comment>): Note {
-         return copy(comments = newComments)
-     }
+    override fun withNewComment(newComments: List<Comment>): Note {
+        return copy(comments = newComments)
+    }
 
-     override fun copyWithDeletedComment(newComments: List<Comment>): Note {
-         return this.copy(comments = newComments)
-     }
+    override fun copyWithDeletedComment(newComments: List<Comment>): Note {
+        return this.copy(comments = newComments)
+    }
 
-     override fun copyWithNewInformation(newTitle: String, newText: String): Note {
-         return copy(title = newTitle, text = newText)
-     }
-     override fun copyDeleted(isDeleted: Boolean): Note {
-         return copy(isDeleted = true)
-     }
+    override fun copyWithNewInformation(newTitle: String, newText: String): Note {
+        return copy(title = newTitle, text = newText)
+    }
+
+    override fun copyDeleted(isDeleted: Boolean): Note {
+        return copy(isDeleted = true)
+    }
 }
 
 class ContentService<T : Content<T>> {
@@ -87,40 +89,40 @@ class ContentService<T : Content<T>> {
         throw ContentNotFoundException("Content with id $searchId not found")
     }
 
-    fun delete(searchId: Int, id: Int): Content<T>{
-            val indexOfSearchedContent = anyContent.indexOfFirst { it.id == searchId }
+    fun delete(searchId: Int, id: Int): Content<T> {
+        val indexOfSearchedContent = anyContent.indexOfFirst { it.id == searchId }
         if (indexOfSearchedContent == -1) throw ContentNotFoundException("Content with id $searchId not found")
         val contentToUpdate = anyContent[indexOfSearchedContent]
 
-            val updatedContent = contentToUpdate.copyDeleted(contentToUpdate.isDeleted)
+        val updatedContent = contentToUpdate.copyDeleted(contentToUpdate.isDeleted)
 
 
-            anyContent[indexOfSearchedContent] = updatedContent
-            return updatedContent
+        anyContent[indexOfSearchedContent] = updatedContent
+        return updatedContent
     }
 
-    fun deleteComment(searchCommentId: Int, commentId: Int) : Content<T> {
+    fun deleteComment(searchCommentId: Int, commentId: Int): Content<T> {
         for ((contentIndex, content) in anyContent.withIndex()) {
             val indexOfSearchedComment = content.comments.indexOfFirst { it.commentId == searchCommentId }
 
-                val updatedComment = content.comments[indexOfSearchedComment].copy(isDeleted = true)
+            val updatedComment = content.comments[indexOfSearchedComment].copy(isDeleted = true)
 
 
-                val updatedComments = content.comments.toMutableList().apply {
-                    set(indexOfSearchedComment, updatedComment)
-                }
+            val updatedComments = content.comments.toMutableList().apply {
+                set(indexOfSearchedComment, updatedComment)
+            }
 
 
-                val updatedContent = content.copyWithDeletedComment(updatedComments)
+            val updatedContent = content.copyWithDeletedComment(updatedComments)
 
 
-                anyContent[contentIndex] = updatedContent
-                return updatedContent
+            anyContent[contentIndex] = updatedContent
+            return updatedContent
         }
         throw ContentNotFoundException("Content with id $searchCommentId not found")
     }
 
-    fun editComment(searchCommentId: Int, commentId: Int, newText: String, comment: Comment) : Content<T> {
+    fun editComment(searchCommentId: Int, commentId: Int, newText: String, comment: Comment): Content<T> {
         for ((contentIndex, content) in anyContent.withIndex()) {
             val indexOfSearchedComment = content.comments.indexOfFirst { it.commentId == searchCommentId }
             val updatedComment = content.comments[indexOfSearchedComment].copy(comment = newText)
@@ -133,22 +135,22 @@ class ContentService<T : Content<T>> {
 
             anyContent[contentIndex] = updatedContent
             return updatedContent
-    }
+        }
         throw ContentNotFoundException("Content with id $searchCommentId not found")
     }
 
-    fun edit(searchId: Int, newTitle: String, newText: String) : Content<T> {
+    fun edit(searchId: Int, newTitle: String, newText: String): Content<T> {
         val indexOfSearchedContent = anyContent.indexOfFirst { it.id == searchId }
         if (indexOfSearchedContent == -1) throw ContentNotFoundException("Content with id $searchId not found")
         val contentToUpdate = anyContent[indexOfSearchedContent]
-            val updatedContent = contentToUpdate.copyWithNewInformation(newTitle, newText)
+        val updatedContent = contentToUpdate.copyWithNewInformation(newTitle, newText)
         anyContent[indexOfSearchedContent] = updatedContent
 
-            return updatedContent
+        return updatedContent
 
     }
 
-    fun restoreComment(searchCommentId: Int, commentId: Int) : Content<T> {
+    fun restoreComment(searchCommentId: Int, commentId: Int): Content<T> {
         for ((contentIndex, content) in anyContent.withIndex()) {
             val indexOfSearchedComment = content.comments.indexOfFirst { it.commentId == searchCommentId }
 
@@ -200,12 +202,12 @@ fun main() {
     val noteService = ContentService<Note>()
 
     val firstNote = Note(
-       id = 0,
-   authorId = 1,
-date = System.currentTimeMillis(),
-comments = emptyList<Comment>(),
-title = "Hello, everyone!",
- text = "It's such a good day!",
+        id = 0,
+        authorId = 1,
+        date = System.currentTimeMillis(),
+        comments = emptyList<Comment>(),
+        title = "Hello, everyone!",
+        text = "It's such a good day!",
     )
 
     val addedFirstNote = noteService.add(firstNote)
@@ -224,7 +226,7 @@ title = "Hello, everyone!",
         title = "Good morning!",
         text = "It's such a rainy day!",
     )
-   val addedSecondNote = noteService.add(secondtNote)
+    val addedSecondNote = noteService.add(secondtNote)
 
     val newComment = noteService.createComment(
         searchId = addedSecondNote.id,

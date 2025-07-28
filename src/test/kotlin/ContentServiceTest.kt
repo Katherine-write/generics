@@ -2,7 +2,6 @@ import junit.framework.TestCase.assertEquals
 import org.junit.Before
 
 
-
 import ru.netology.Comment
 import ru.netology.ContentNotFoundException
 import ru.netology.ContentService
@@ -139,7 +138,7 @@ class ContentServiceTest {
             text = "Morning!"
         )
 
-        val result =  noteService.deleteComment(
+        val result = noteService.deleteComment(
             searchCommentId = 1,
             commentId = 1
         )
